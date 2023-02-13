@@ -1,0 +1,12 @@
+{
+  "name": "micro-frontend",
+  "version": "1.0.0",
+  "author": "snackyoo <ksyoo.dev@gmail.com>",
+  "private": true,
+  "workspaces": [
+    "packages/**"
+  ],
+  "scripts": {
+    "@server": "yarn workspace server"
+  }
+}
