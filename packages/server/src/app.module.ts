@@ -8,6 +8,7 @@ import {ChatModule} from "./chat/chat.module";
 import {MeetupModule} from "./meetup/meetup.module";
 import {UserORM} from "./user/store/mysql/user.orm";
 import {AuthenticationORM} from "./user/store/mysql/authentication.orm";
+import {ProfileORM} from "./user/store/mysql/profile.orm";
 
 
 @Module({
@@ -19,7 +20,7 @@ import {AuthenticationORM} from "./user/store/mysql/authentication.orm";
       username: 'root',
       password: 'example',
       database: 'mysql',
-      entities: [UserORM, AuthenticationORM],
+      entities: [UserORM, AuthenticationORM, ProfileORM],
       synchronize: true,
     }),
       ...[UserModule, ChatModule, MeetupModule]

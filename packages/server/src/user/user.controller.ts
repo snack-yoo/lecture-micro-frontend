@@ -1,19 +1,20 @@
 import {Body, Controller, Get, Post} from '@nestjs/common';
 import { UserService } from './user.service';
-import {User} from "./model";
+import {Profile, User} from "./model";
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  getHello(): string {
-    return this.userService.getHello();
+  @Post('sign-up')
+  async signup(@Body() signup: { id: string, name: string, password: string }): Promise<User> {
+    const {id, name, password} = signup;
+    return await this.userService.signUp(id, name, password);
   }
 
-  @Post()
-  async signup(@Body() signup: { name: string, password: string }): Promise<User> {
-    const {name, password} = signup;
-    return await this.userService.signup(name, password);
+  @Post('sign-in')
+  async signIn(@Body() signIn: {id: string, password: string }): Promise<User & Pick<Profile, 'displayName'>> {
+    const { id, password } = signIn;
+    return await this.userService.signIn(id, password);
   }
 }
