@@ -1,12 +1,36 @@
-import { Controller, Get } from '@nestjs/common';
+import {Body, Controller, Get, Post, Put} from '@nestjs/common';
 import { ChatService } from './chat.service';
+import {ChatMessage, ChatRoom} from "./model";
+import {ChatOffset} from "./model/ChatOffset";
 
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Get()
-  getHello(): string {
-    return this.chatService.getHello();
+  @Post('open')
+  async open(
+      @Body('room') room: Pick<ChatRoom, 'type' | 'title'>,
+      @Body('message') message: Pick<ChatMessage, 'message' | 'type' | 'senderId'>
+  ) {
+    console.log(room, message)
   }
+
+  @Post('send')
+  async send(
+      @Body() message: Pick<ChatMessage, 'message' | 'type' | 'senderId' | 'chatRoomId'>
+  ) {
+
+  }
+
+  @Get('offset')
+  async getOffsets(@Body('userId') userId: string): Promise<ChatOffset[]> {
+
+  }
+
+  @Put(['offset', ':chatRoomId'])
+  async read(@Body('userId') userId: string) {
+
+  }
+
+
 }

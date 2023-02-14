@@ -1,6 +1,6 @@
-import {Body, Controller, Get, Post} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post} from '@nestjs/common';
 import { UserService } from './user.service';
-import {Profile, User} from "./model";
+import {User} from "./model";
 
 @Controller('user')
 export class UserController {
@@ -13,8 +13,18 @@ export class UserController {
   }
 
   @Post('sign-in')
-  async signIn(@Body() signIn: {id: string, password: string }): Promise<User & Pick<Profile, 'displayName'>> {
+  async signIn(@Body() signIn: {id: string, password: string }): Promise<User> {
     const { id, password } = signIn;
     return await this.userService.signIn(id, password);
+  }
+
+  @Get()
+  async getUsers(): Promise<User[]> {
+    return await this.userService.getUsers();
+  }
+
+  @Get(':userId')
+  async getUser(@Param('userId') userId: string): Promise<User> {
+    return await this.userService.getUser(userId);
   }
 }

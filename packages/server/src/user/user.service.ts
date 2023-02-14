@@ -2,12 +2,10 @@ import {Injectable} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {DataSource, Repository} from "typeorm";
 //
-import {UserORM} from "./store/mysql/user.orm";
-import {AuthType, Profile, User} from "./model";
-import {AuthenticationORM} from "./store/mysql/authentication.orm";
-import {ProfileORM} from "./store/mysql/profile.orm";
-import {AppException} from "../exception/AppException";
-import {compare, encrypt} from "../crypt/PasswordCrypto";
+import {UserORM, AuthenticationORM} from "./store/orm";
+import {AuthType, User} from "./model";
+import {AppException} from "../shared/exception/AppException";
+import {compare, encrypt} from "../shared/crypt/PasswordCrypto";
 
 @Injectable()
 export class UserService {
@@ -16,8 +14,6 @@ export class UserService {
       private userRepository: Repository<UserORM>,
       @InjectRepository(AuthenticationORM)
       private authenticationRepository: Repository<AuthenticationORM>,
-      @InjectRepository(ProfileORM)
-      private profileRepository: Repository<ProfileORM>,
       private dataSource: DataSource
   ) {}
 
@@ -32,7 +28,6 @@ export class UserService {
     await this.dataSource.transaction(async entityManager => {
       await entityManager.insert(UserORM, {id, name});
       await entityManager.insert(AuthenticationORM, {userId: id, secret: await encrypt(password), type: AuthType.password});
-      await entityManager.insert(ProfileORM, {userId: id, displayName: name, photoUri: ''});
     })
     return {id, name};
   }
@@ -44,7 +39,7 @@ export class UserService {
   async signIn(
       id: string,
       password: string
-  ): Promise<User & Pick<Profile, 'displayName'>> {
+  ): Promise<User> {
     const auth = await this.authenticationRepository.findOne({where: {userId: id}});
     if (!auth) {
       throw new AppException("UserNotExists");
@@ -57,11 +52,14 @@ export class UserService {
     if (!user) {
       throw new AppException("UserNotExists");
     }
-    const profile = await this.profileRepository.findOne({where: {userId: id}});
-    return {...user, displayName: profile ? profile.displayName : user.name}
+    return user;
   }
 
-  getHello(): string {
-    return 'Hello World!';
+  async getUsers(): Promise<User[]> {
+    return await this.userRepository.find();
+  }
+
+  async getUser(userId: string): Promise<User> {
+    return await this.userRepository.findOne({where: {id: userId}});
   }
 }
