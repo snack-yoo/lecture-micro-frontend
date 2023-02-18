@@ -15,7 +15,11 @@ export class ChatRoomORM implements ChatRoom {
     type: ChatRoomType;
 
     @Column()
-    offset: number;
+    lastOffset: number;
+
+    @Column('json')
+    participantIds: string[];
+
 }
 
 @Entity()
@@ -23,9 +27,9 @@ export class ChatMessageORM implements ChatMessage {
     @PrimaryColumn()
     id: string;
 
-    @Column()
+    @Column({type: 'bigint'})
     registrationTime: number;
-    @Column()
+    @Column({type: 'bigint'})
     modificationTime: number;
     @Column()
     offset: number;

@@ -2,7 +2,8 @@ export interface ChatRoom {
     id: string;
     title: string;
     type: ChatRoomType;
-    offset: number;
+    lastOffset: number;
+    participantIds: string[];
 }
 
 export enum ChatRoomType {

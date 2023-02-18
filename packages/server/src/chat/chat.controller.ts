@@ -9,22 +9,22 @@ export class ChatController {
 
   @Post('open')
   async open(
-      @Body('room') room: Pick<ChatRoom, 'type' | 'title'>,
+      @Body('room') room: Pick<ChatRoom, 'type' | 'title' | 'participantIds'>,
       @Body('message') message: Pick<ChatMessage, 'message' | 'type' | 'senderId'>
-  ) {
-    console.log(room, message)
+  ): Promise<string> {
+    return this.chatService.open(room, message);
   }
 
   @Post('send')
   async send(
       @Body() message: Pick<ChatMessage, 'message' | 'type' | 'senderId' | 'chatRoomId'>
-  ) {
-
+  ): Promise<string> {
+    return this.chatService.send(message);
   }
 
   @Get('offset')
   async getOffsets(@Body('userId') userId: string): Promise<ChatOffset[]> {
-
+    return [];
   }
 
   @Put(['offset', ':chatRoomId'])
